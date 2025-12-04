@@ -1,3 +1,4 @@
+reqyure('dotenv').config();
 var createError = require('http-errors');
 var express = require('express');
 var path = require('path');
@@ -36,7 +37,9 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
 //connect database
-mongoose.connect('mongodb://localhost:27017/and103')
+const uri = process.env.MONGODB_URI || "";
+
+mongoose.connect(uri)
   .then(() => console.log('>>>>>>>>>> DB Connected!!!!!!'))
   .catch(err => console.log('>>>>>>>>> DB Error: ', err));
 
