@@ -1,0 +1,427 @@
+openapi: 3.0.0
+info:
+  title: Hệ Thống Bán Hàng API
+  version: 1.0.0
+  description: Tài liệu cho 15 API (Users, Products, Categories)
+servers:
+  - url: http://localhost:3000
+    description: Local Server
+
+# --- ĐỊNH NGHĨA MODEL DỮ LIỆU ---
+components:
+  schemas:
+    User:
+      type: object
+      required:
+        - username
+        - password
+        - email
+      properties:
+        username:
+          type: string
+        email:
+          type: string
+          format: email
+        password:
+          type: string
+          format: password
+        phone:
+          type: string
+        role:
+          type: string
+          enum: [user, admin]
+        status:
+          type: string
+          enum: [active, inactive]
+    
+    Product:
+      type: object
+      properties:
+        name:
+          type: string
+        price:
+          type: number
+        quantity:
+          type: number
+        description:
+          type: string
+    
+    Category:
+      type: object
+      properties:
+        cateName:
+          type: string
+        parentID:
+          type: string
+
+# --- ĐỊNH NGHĨA CÁC API ---
+paths:
+  # ===========================
+  # GROUP 1: USERS (6 APIs)
+  # ===========================
+  /users/register:
+    post:
+      tags: [Users]
+      summary: 1. Đăng ký tài khoản mới (Create)
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/User'
+      responses:
+        200:
+          description: Đăng ký thành công
+
+  /users/login:
+    post:
+      tags: [Users]
+      summary: 2. Đăng nhập
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                username:
+                  type: string
+                password:
+                  type: string
+      responses:
+        200:
+          description: Đăng nhập thành công (Trả về Token)
+
+  /users:
+    get:
+      tags: [Users]
+      summary: 3. Lấy danh sách người dùng (Read All)
+      responses:
+        200:
+          description: Danh sách users
+
+  /users/{id}:
+    get:
+      tags: [Users]
+      summary: 4. Lấy chi tiết người dùng (Read One)
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: Thông tin user
+    
+    put:
+      tags: [Users]
+      summary: 5. Cập nhật thông tin người dùng (Update)
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/User'
+      responses:
+        200:
+          description: Cập nhật thành công
+
+    delete:
+      tags: [Users]
+      summary: 6. Xóa người dùng (Delete)
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: Xóa thành công
+
+  # ===========================
+  # GROUP 2: PRODUCTS (5 APIs)
+  # ===========================
+  /products:
+    post:
+      tags: [Products]
+      summary: 7. Thêm sản phẩm (Create)
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Product'
+      responses:
+        200:
+          description: Thành công
+    
+    get:
+      tags: [Products]
+      summary: 8. Lấy danh sách sản phẩm (Read All)
+      responses:
+        200:
+          description: Danh sách sản phẩm
+
+  /products/{id}:
+    get:
+      tags: [Products]
+      summary: 9. Xem chi tiết sản phẩm (Read One)
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: Chi tiết sản phẩm
+
+    put:
+      tags: [Products]
+      summary: 10. Sửa sản phẩm (Update)
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Product'
+      responses:
+        200:
+          description: Sửa thành công
+
+    delete:
+      tags: [Products]
+      summary: 11. Xóa sản phẩm (Delete)
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: Xóa thành công
+
+  # ===========================
+  # GROUP 3: CATEGORIES (4 APIs)
+  # ===========================
+  /categories:
+    post:
+      tags: [Categories]
+      summary: 12. Thêm danh mục (Create)
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Category'
+      responses:
+        200:
+          description: Thành công
+    
+    get:
+      tags: [Categories]
+      summary: 13. Lấy danh sách danh mục (Read All)
+      responses:
+        200:
+          description: Danh sách danh mục
+
+  /categories/{id}:
+    put:
+      tags: [Categories]
+      summary: 14. Sửa danh mục (Update)
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Category'
+      responses:
+        200:
+          description: Thành công
+
+    delete:
+      tags: [Categories]
+      summary: 15. Xóa danh mục (Delete)
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: Thành công
+
+  # ===========================
+  # 15 CÂU HỎI TRUY VẤN (QUERIES)
+  # ===========================
+  
+  # Câu 1: Giá > 50k
+  /product/cau1:
+    get:
+      tags: [Queries]
+      summary: 1. Sản phẩm giá > 50,000
+      responses:
+        200:
+          description: Thành công
+
+  # Câu 2: Số lượng < 10
+  /product/cau2:
+    get:
+      tags: [Queries]
+      summary: 2. Sản phẩm có số lượng < 10
+      responses:
+        200:
+          description: Thành công
+
+  # Câu 3: Tên chứa "socola"
+  /product/cau3:
+    get:
+      tags: [Queries]
+      summary: 3. Tìm tên chứa từ khóa "socola"
+      responses:
+        200:
+          description: Thành công
+
+  # Câu 4: Sắp xếp giá tăng dần
+  /product/cau4:
+    get:
+      tags: [Queries]
+      summary: 4. Sắp xếp theo giá tăng dần
+      responses:
+        200:
+          description: Thành công
+
+  # Câu 5: Top 3 giá cao nhất
+  /product/cau5:
+    get:
+      tags: [Queries]
+      summary: 5. Top 3 sản phẩm giá cao nhất
+      responses:
+        200:
+          description: Thành công
+
+  # Câu 6: Top 5 số lượng nhiều nhất
+  /product/cau6:
+    get:
+      tags: [Queries]
+      summary: 6. Top 5 sản phẩm tồn kho nhiều nhất
+      responses:
+        200:
+          description: Thành công
+
+  # Câu 7: Tạo hôm nay
+  /product/cau7:
+    get:
+      tags: [Queries]
+      summary: 7. Sản phẩm tạo trong hôm nay
+      responses:
+        200:
+          description: Thành công
+
+  # Câu 8: Giá 20k - 100k
+  /product/cau8:
+    get:
+      tags: [Queries]
+      summary: 8. Giá từ 20,000 - 100,000
+      responses:
+        200:
+          description: Thành công
+
+  # Câu 9: Tên bắt đầu "Bánh"
+  /product/cau9:
+    get:
+      tags: [Queries]
+      summary: 9. Tên bắt đầu bằng chữ "Bánh"
+      responses:
+        200:
+          description: Thành công
+
+  # Câu 10: Giá < x và Quantity > y
+  # Lưu ý: Code của bạn dùng req.params nên URL phải có tham số
+  /product/cau10/{price}/{quantity}:
+    get:
+      tags: [Queries]
+      summary: 10. Tìm theo điều kiện Giá < X và Số lượng > Y
+      parameters:
+        - in: path
+          name: price
+          required: true
+          schema:
+            type: number
+          description: Mức giá trần (X)
+        - in: path
+          name: quantity
+          required: true
+          schema:
+            type: number
+          description: Mức số lượng sàn (Y)
+      responses:
+        200:
+          description: Thành công
+
+  # Câu 11: Giá < 100k, status true, sort giá giảm
+  /product/cau11:
+    get:
+      tags: [Queries]
+      summary: 11. Giá < 100k, Active, Sort giá giảm
+      responses:
+        200:
+          description: Thành công
+
+  # Câu 12: Quantity 10-30, tên chứa "bánh"
+  /product/cau12:
+    get:
+      tags: [Queries]
+      summary: 12. Số lượng 10-30 và tên chứa "bánh"
+      responses:
+        200:
+          description: Thành công
+
+  # Câu 13: Tên "kem" hoặc "socola", giá > 20k
+  /product/cau13:
+    get:
+      tags: [Queries]
+      summary: 13. Tên kem|socola và giá > 20k
+      responses:
+        200:
+          description: Thành công
+
+  # Câu 14: Quantity > 20, sort qty giảm, price tăng
+  /product/cau14:
+    get:
+      tags: [Queries]
+      summary: 14. Quantity > 20, sort Qty giảm -> Price tăng
+      responses:
+        200:
+          description: Thành công
+
+  # Câu 15: Theo CateID, loại bỏ status false
+  /product/cau15/{cateID}:
+    get:
+      tags: [Queries]
+      summary: 15. Lấy theo Category ID (chỉ lấy Active)
+      parameters:
+        - in: path
+          name: cateID
+          required: true
+          schema:
+            type: string
+          description: ID của danh mục
+      responses:
+        200:
+          description: Thành công
