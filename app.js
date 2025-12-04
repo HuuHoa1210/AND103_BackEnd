@@ -1,4 +1,4 @@
-reqyure('dotenv').config();
+require('dotenv').config();
 var createError = require('http-errors');
 var express = require('express');
 var path = require('path');
@@ -37,7 +37,7 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
 //connect database
-const uri = process.env.MONGODB_URI || "";
+const uri = process.env.MONGODB_URI || "mongodb://localhost:27017/";
 
 mongoose.connect(uri)
   .then(() => console.log('>>>>>>>>>> DB Connected!!!!!!'))
@@ -64,5 +64,8 @@ app.use(function(err, req, res, next) {
   res.status(err.status || 500);
   res.render('error');
 });
-
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => {
+  console.log(`Server đang chạy tại http://localhost:${PORT}`);
+});
 module.exports = app;
